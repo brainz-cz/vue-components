@@ -2,7 +2,7 @@
 A collection of Brainz-made Vue components
 
 
-###Lettering usage:
+#### Lettering:
 
 ```
 <lettering>{{string}}</lettering>
