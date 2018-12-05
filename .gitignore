@@ -1,0 +1,30 @@
+### MacOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### Windows ###
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+### Nuxt ###
+.nuxt
+dist
+node_modules
+npm-debug.log
