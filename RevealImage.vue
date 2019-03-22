@@ -1,6 +1,16 @@
 <template>
     <div class="reveal">
-        <img v-bind:src="src" v-bind:alt="alt">
+      <div
+        class="mask"
+        :style="maskStyle"
+      >
+        <img
+          :src="src"
+          :alt="alt"
+          :style="imageStyle"
+          @load="loader"
+        >
+      </div>
     </div>
 </template>
 
@@ -21,15 +31,52 @@ export default {
             default: 0
         }
     },
-	data: function() {
-		return {
+    data: function() {
+      return {
+        reveal: false,
+        imageWidth: 'auto',
+        imageHeight: 'auto'
+      }
+    },
+    computed: {
+      maskStyle() {
 
-		}
+        var maskWidth = (50*Math.sqrt(2)*(this.imageHeight+this.imageWidth))/this.imageWidth + '%';
+        var maskTransform = `rotate(-45deg) translate3d(-${(100*this.imageHeight)/(this.imageHeight+this.imageWidth)}%, -100%, 0)`;
+
+        if(this.reveal){
+          maskTransform = `rotate(-45deg) translate3d(-${(100*this.imageHeight)/(this.imageHeight+this.imageWidth)}%, 0%, 0)`;
+        }
+
+        return {
+          width: maskWidth,
+          paddingBottom: maskWidth,
+          marginBottom: ((50*(Math.sqrt(2)*this.imageHeight-2*this.imageHeight+Math.sqrt(2)*this.imageWidth))/this.imageWidth)*-1 + '%',
+          transform: maskTransform,
+        }
+      },
+      imageStyle() {
+
+        var imageTransform = `rotate(45deg) translate3d(${(50*(2*this.imageHeight+this.imageWidth))/this.imageWidth}%, ${(50*this.imageWidth)/this.imageHeight}%, 0)`;
+
+        if(this.reveal){
+          imageTransform = `rotate(45deg) translate3d(${this.imageHeight/this.imageWidth/2*100}%, -50%, 0)`;
+        }
+
+        return {
+          width: (100*Math.sqrt(2)*this.imageWidth)/(this.imageHeight+this.imageWidth) + '%',
+          transform: imageTransform,
+        }
+      }
     },
     mounted(){
         this.onScroll();
     },
     methods: {
+        loader() {
+            this.imageWidth = this.$el.querySelector('img').clientWidth;
+            this.imageHeight = this.$el.querySelector('img').clientHeight;
+        },
         onScroll: function () {
             window.addEventListener("scroll", () => {
                 this.handleScroll()
@@ -37,7 +84,7 @@ export default {
         },
         handleScroll: function () {
             if(this.isElementInViewport()) {
-                this.reveal();
+                this.reveal = true;
             }
         },
         isElementInViewport: function () {
@@ -58,9 +105,6 @@ export default {
             }
             return location >= 0 ? location : 0;
         },
-        reveal: function () {
-            this.$el.classList.add('is-revealing');
-        }
     }
 }
 </script>
@@ -68,27 +112,24 @@ export default {
 <style lang="scss">
 
     .reveal {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+
+      .mask{
         position: relative;
         overflow: hidden;
-        z-index: -1;
+        height: 0;
+        transition: transform 1s ease-out;
+        transform-origin: 0 0;
+      }
 
-        &:before {
-            position: absolute;
-            content: '';
-            width: 200%;
-            height: 200%;
-            background-color: #fff;
-            opacity: 1;
-            transition: all 2s ease;
-            transform: translate3d(-20%, -30%, 0) rotate(33deg);
-        }
-
-        &.is-revealing {
-            z-index: 1;
-            &:before {
-                transform: translate3d(50%, 70%, 0) rotate(33deg);
-            }
-        }
+      img {
+        position: relative;
+        transition: transform 1s ease-out;
+        transform-origin: 0 0;
+        height: auto;
+      }
     }
 
 </style>
